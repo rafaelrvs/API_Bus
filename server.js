@@ -1,5 +1,5 @@
 import express from 'express';
-import cors from 'cors';  // Adicionando o cors
+import cors from 'cors';
 import { config } from 'dotenv';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
@@ -9,9 +9,9 @@ config();
 const app = express();
 const port = process.env.PORT || 80;
 
-// Configura o CORS para permitir requisições de outras origens (por exemplo, do seu front-end)
+// Configura o CORS para permitir a origem do front-end na Vercel
 app.use(cors({
-  origin: 'http://127.0.0.1:5500' // Permite requisições dessa origem específica (onde está seu front-end)
+  origin: 'https://pega-p-bus-ai.vercel.app' // Permite requisições do front-end hospedado na Vercel
 }));
 
 // Middleware para parsing de JSON
@@ -19,8 +19,6 @@ app.use(express.json());
 
 // Inicializa o GoogleGenerativeAI com a chave de API
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
-
-// Seleciona o modelo "gemini-1.5-flash"
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
 // Endpoint para análise de blocos de texto
