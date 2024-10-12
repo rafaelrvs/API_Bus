@@ -11,7 +11,7 @@ const port = process.env.PORT || 80;
 
 // Configura o CORS para permitir a origem do front-end na Vercel
 app.use(cors({
-  origin: ['https://pega-o-bus-ai.vercel.app','https://www.rvstechsolucoes.com.br/'], // Corrigido para o domínio correto
+  origin: 'https://www.rvstechsolucoes.com.br/', // Corrigido para o domínio correto
   methods: ['GET', 'POST'], // Definir os métodos permitidos
 }));
 
