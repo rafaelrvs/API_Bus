@@ -11,8 +11,9 @@ const port = process.env.PORT || 80;
 
 // Configura o CORS para permitir a origem do front-end na Vercel
 app.use(cors({
-  origin: 'https://consultaonibus.rvstechsolucoes.com.br/', // Corrigido para o domínio correto
-  methods: ['GET', 'POST'], // Definir os métodos permitidos
+  origin: ['https://consultaonibus.rvstechsolucoes.com.br', 'https://rvstechsolucoes.com.br'], // Permite múltiplas origens (para ambiente local e produção)
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization'], // Certifique-se de permitir os cabeçalhos necessários
 }));
 
 // Middleware para parsing de JSON
