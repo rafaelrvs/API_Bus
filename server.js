@@ -11,7 +11,8 @@ const port = process.env.PORT || 80;
 
 // Configura o CORS para permitir a origem do front-end na Vercel
 app.use(cors({
-  origin: 'https://pega-p-bus-ai.vercel.app' // Permite requisições do front-end hospedado na Vercel
+  origin: 'https://pega-o-bus-ai.vercel.app', // Corrigido para o domínio correto
+  methods: ['GET', 'POST'], // Definir os métodos permitidos
 }));
 
 // Middleware para parsing de JSON
@@ -34,8 +35,8 @@ app.post('/analyze', async (req, res) => {
     const result = await model.generateContent(blocosEncontrados);
 
     // Garante que o resultado tenha uma resposta válida
-    if (result && result.response && result.response.text()) {
-      const resposta = result.response.text();
+    if (result && result.response && typeof result.response.text === 'function') {
+      const resposta = await result.response.text(); // Adicionado 'await' para garantir a resolução
       res.json({ resposta });
     } else {
       res.status(500).json({ error: 'Falha ao obter uma resposta válida do modelo.' });
