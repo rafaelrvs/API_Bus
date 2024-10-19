@@ -2,7 +2,6 @@ import express from 'express';
 import chatRoutes from './chatRoutes.js';
 import cors from 'cors';
 
-
 export default (app) => {
     app.use(
         cors({

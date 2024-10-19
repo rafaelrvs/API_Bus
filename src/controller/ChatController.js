@@ -1,4 +1,3 @@
-
 class ChatController {
     enviaMensagem = async (req, res) => {
         const { text: blocosEncontrados } = req.body;
@@ -30,8 +29,7 @@ class ChatController {
             console.error('Erro ao gerar conteúdo:', error);
             res.status(500).json({ error: 'Erro ao gerar conteúdo.' });
         }
-
     }
-
 }
+
 export default new ChatController();
