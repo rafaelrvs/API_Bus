@@ -1,13 +1,26 @@
+// Importa o gemini-fetch (ou a biblioteca certa do Google)
+import geminiFetch from 'gemini-fetch';
+
 class ChatController {
+    constructor() {
+        // Inicializa o cliente Gemini com as credenciais apropriadas
+        this.model = geminiFetch({
+            apiKey: process.env.GEMINI_API_KEY, // Certifique-se de definir a chave de API no arquivo .env
+        });
+    }
+
     enviaMensagem = async (req, res) => {
         const { text: blocosEncontrados } = req.body;
 
         if (!blocosEncontrados) {
             return res.status(400).json({ error: 'O campo "text" é obrigatório.' });
         }
+
         try {
-            // Gera o conteúdo a partir do modelo
-            const result = await model.generateContent(blocosEncontrados);
+            // Gera o conteúdo a partir do modelo usando o cliente Gemini
+            const result = await this.model.generateContent({
+                prompt: blocosEncontrados, // Usa o texto enviado pelo usuário
+            });
 
             // Garante que o resultado tenha uma resposta válida
             if (result && result.response && typeof result.response.text === 'function') {
