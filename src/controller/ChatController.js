@@ -1,10 +1,17 @@
-// Importa o gemini-fetch (ou a biblioteca certa do Google)
 import geminiFetch from 'gemini-fetch';
+import GoogleGenerativeAI from 'google-generative-ai'; // Importando a biblioteca correta do Google
 
 class ChatController {
+
     constructor() {
-        // Inicializa o cliente Gemini com as credenciais apropriadas
-        this.model = geminiFetch({
+        // Inicializa o GoogleGenerativeAI com a chave de API
+        this.genAI = new GoogleGenerativeAI(process.env.API_KEY);
+        
+        // Inicializa o modelo generativo Gemini com as credenciais apropriadas
+        this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+        // Inicializa o cliente GeminiFetch
+        this.geminiClient = geminiFetch({
             apiKey: process.env.GEMINI_API_KEY, // Certifique-se de definir a chave de API no arquivo .env
         });
     }
@@ -23,8 +30,8 @@ class ChatController {
             });
 
             // Garante que o resultado tenha uma resposta válida
-            if (result && result.response && typeof result.response.text === 'function') {
-                const resposta = await result.response.text();
+            if (result && result.response && typeof result.response.text === 'string') {
+                const resposta = result.response.text;
 
                 // Define o cookie com as opções SameSite=None e Secure
                 res.cookie('mySecureCookie', 'cookieValue', {
