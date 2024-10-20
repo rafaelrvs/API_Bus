@@ -1,5 +1,8 @@
 import geminiFetch from 'gemini-fetch';
-import GoogleGenerativeAI from 'google-generative-ai'; // Importando a biblioteca correta do Google
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+
+
 
 class ChatController {
 
