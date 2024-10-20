@@ -3,12 +3,12 @@ import axios from 'axios';
 class ChatController {
     constructor() {
         this.apiKey = process.env.API_KEY; // Use a chave da API do ambiente
-        this.apiUrl = 'https://api.google-gemini.com/v1/generate'; // Substitua pelo endpoint correto
+        this.apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key='; // Substitua pelo endpoint correto
     }
 
     enviaMensagem = async (req, res) => {
         const { text: blocosEncontrados } = req.body; // Extrai o campo "text" do corpo da requisição
-        console.log(req.body);
+   
 
         // Verifica se o campo "text" foi fornecido na requisição
         if (!blocosEncontrados) {
@@ -32,7 +32,10 @@ class ChatController {
                 }
             );
 
-            // Verifica se a resposta da API contém um texto válido
+            // Inspeciona a estrutura da resposta
+            console.log('Resposta da API:', response.data);
+
+            // Verifica e ajusta a forma de acessar a resposta
             if (response.data && response.data.message && typeof response.data.message.text === 'string') {
                 const resposta = response.data.message.text;
 
@@ -46,6 +49,8 @@ class ChatController {
 
                 // Retorna a resposta gerada para o cliente
                 res.json({ resposta });
+                
+                
             } else {
                 // Retorna um erro se a resposta da API for inválida
                 res.status(500).json({ error: 'Falha ao obter uma resposta válida do modelo.' });
