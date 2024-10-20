@@ -1,40 +1,33 @@
-import geminiFetch from 'gemini-fetch';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-
-
-
 class ChatController {
-
     constructor() {
-        // Inicializa o GoogleGenerativeAI com a chave de API
-        this.genAI = new GoogleGenerativeAI(process.env.API_KEY);
-        
-        // Inicializa o modelo generativo Gemini com as credenciais apropriadas
-        this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
-        // Inicializa o cliente GeminiFetch
-        this.geminiClient = geminiFetch({
-            apiKey: process.env.GEMINI_API_KEY, // Certifique-se de definir a chave de API no arquivo .env
+        // Inicializa o cliente da API Google Generative AI com a chave API
+        this.genAI = new GoogleGenerativeAI({
+            apiKey: process.env.API_KEY, // Use a chave da API do ambiente
         });
     }
 
+    // Método que envia uma mensagem para a API Google Generative AI
     enviaMensagem = async (req, res) => {
-        const { text: blocosEncontrados } = req.body;
+        const { text: blocosEncontrados } = req.body; // Extrai o campo "text" do corpo da requisição
 
+        // Verifica se o campo "text" foi fornecido na requisição
         if (!blocosEncontrados) {
             return res.status(400).json({ error: 'O campo "text" é obrigatório.' });
         }
 
         try {
-            // Gera o conteúdo a partir do modelo usando o cliente Gemini
-            const result = await this.model.generateContent({
-                prompt: blocosEncontrados, // Usa o texto enviado pelo usuário
+            // Envia o prompt para a API Google Generative AI e aguarda a resposta
+            const result = await this.genAI.generateMessage({
+                prompt: {
+                    text: blocosEncontrados, // Usa o texto enviado pelo usuário como prompt
+                }
             });
 
-            // Garante que o resultado tenha uma resposta válida
-            if (result && result.response && typeof result.response.text === 'string') {
-                const resposta = result.response.text;
+            // Verifica se a resposta do modelo contém um texto válido
+            if (result && result.message && typeof result.message.text === 'string') {
+                const resposta = result.message.text;
 
                 // Define o cookie com as opções SameSite=None e Secure
                 res.cookie('mySecureCookie', 'cookieValue', {
@@ -44,15 +37,19 @@ class ChatController {
                     maxAge: 3600000,         // Tempo de vida do cookie (1 hora, neste exemplo)
                 });
 
+                // Retorna a resposta gerada para o cliente
                 res.json({ resposta });
             } else {
+                // Retorna um erro se a resposta do modelo for inválida
                 res.status(500).json({ error: 'Falha ao obter uma resposta válida do modelo.' });
             }
         } catch (error) {
+            // Captura e trata qualquer erro que ocorrer durante o processo
             console.error('Erro ao gerar conteúdo:', error);
             res.status(500).json({ error: 'Erro ao gerar conteúdo.' });
         }
     }
 }
 
+// Exporta o controlador como uma instância única
 export default new ChatController();

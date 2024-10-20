@@ -12,7 +12,7 @@
   "type": "module",
   "dependencies": {
     "@google-cloud/aiplatform": "^3.31.0",
-    "@google/generative-ai": "^0.17.1",
+    "@google/generative-ai": "^0.17.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
