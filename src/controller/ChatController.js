@@ -1,66 +1,23 @@
-import axios from 'axios';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 class ChatController {
-    constructor() {
-        this.apiKey = process.env.API_KEY; // Use a chave da API do ambiente
-        this.apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key='; // Substitua pelo endpoint correto
-    }
-
-    enviaMensagem = async (req, res) => {
-        const { text: blocosEncontrados } = req.body; // Extrai o campo "text" do corpo da requisição
-   
-
-        // Verifica se o campo "text" foi fornecido na requisição
-        if (!blocosEncontrados) {
-            return res.status(400).json({ error: 'O campo "text" é obrigatório.' });
-        }
-
+    static async enviaMensagem(req, res) {
+        const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         try {
-            // Faz a requisição para a API do Google Gemini
-            const response = await axios.post(
-                this.apiUrl,
-                {
-                    prompt: {
-                        text: blocosEncontrados, // Usa o texto enviado pelo usuário como prompt
-                    }
-                },
-                {
-                    headers: {
-                        'Authorization': `Bearer ${this.apiKey}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-
-            // Inspeciona a estrutura da resposta
-            console.log('Resposta da API:', response.data);
-
-            // Verifica e ajusta a forma de acessar a resposta
-            if (response.data && response.data.message && typeof response.data.message.text === 'string') {
-                const resposta = response.data.message.text;
-
-                // Define o cookie com as opções SameSite=None e Secure
-                res.cookie('mySecureCookie', 'cookieValue', {
-                    httpOnly: true,          // Impede o acesso ao cookie via JavaScript no front-end
-                    secure: true,            // Garante que o cookie só seja enviado em conexões HTTPS
-                    sameSite: 'None',        // Permite o envio do cookie em contextos de site cruzado
-                    maxAge: 3600000,         // Tempo de vida do cookie (1 hora, neste exemplo)
-                });
-
-                // Retorna a resposta gerada para o cliente
-                res.json({ resposta });
-                
-                
-            } else {
-                // Retorna um erro se a resposta da API for inválida
-                res.status(500).json({ error: 'Falha ao obter uma resposta válida do modelo.' });
+            const { text, horarios } = req.body;
+            if (!text || !horarios) {
+                return res.status(400).json({ error: 'Dados inválidos' });
             }
+            const prompt = `${text}${horarios}`
+            const result = await model.generateContent(prompt);
+
+            const resposta = result.response.text();
+            return res.status(200).json({ resposta });
         } catch (error) {
-            // Captura e trata qualquer erro que ocorrer durante o processo
-            console.error('Erro ao gerar conteúdo:', error);
-            res.status(500).json({ error: 'Erro ao gerar conteúdo.' });
+            return res.status(500).json({ error: 'Erro no servidor' });
         }
     }
 }
 
-export default new ChatController();
+export default ChatController;

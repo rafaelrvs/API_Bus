@@ -1,8 +1,12 @@
 import express from 'express';
-import routes from './routes/index.js'; // Usando import e com .js
+import routes from './routes/index.js'; // Importando as rotas
 
 const app = express();
 
+// Middleware para interpretar JSON
+app.use(express.json());
+
+// Usando as rotas
 routes(app);
 
-export default app; // Usando export default para ES Module
+export default app;

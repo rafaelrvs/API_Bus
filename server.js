@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import app from './src/app.js'; // Certifique-se de adicionar ".js" no caminho
+import app from './src/app.js'; // Certifique-se de adicionar .js no caminho
 
 dotenv.config();
 
